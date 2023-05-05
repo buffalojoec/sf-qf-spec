@@ -1,4 +1,4 @@
-# Quadtratic Funding Spec
+# Quadratic Funding Spec
 
 This repository is a proof-of-concept for a customized quadratic funding protocol.
 
@@ -60,3 +60,15 @@ It can even be integrated as part of the core functionality, but only used when 
 are disbursed.
 
 ## Sybil Resistance
+
+This platform must take special precautions to protect against Sybil attacks, some of which could include:
+* Identity verification:  
+Require users to submit KYC information in order to participate in the platform. This can be social media profiles, other authentication providers, or phone numbers.
+* Deposit requirements:  
+Require users to deposit a certain amount of SOL to be admitted to the platform. It should be just high enough to deter botting but low enough to allow any honest actor to join.
+* Token-gating:  
+Perhaps the platform can mint its own native platform token to enact token gating. This can be a simply access NFT or it can be a reputation-based SPL token.
+* Community governance:  
+This essentially goes hand-in-hand with the token-gating approach above. Community members can oust bad actors, who can be banned from the platform via token burning, and the white hats who oust them can earn more reputation.
+* CAPTCHAs:  
+An obvious anti-bot method.
