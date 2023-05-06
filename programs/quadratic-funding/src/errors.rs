@@ -12,7 +12,7 @@ pub enum PoolError {
     ReleasedFunds,
 
     #[msg("This pool has already been cancelled")]
-    CancelledPool,
+    PoolClosed,
 
     #[msg("This pool is still active")]
     PoolStillActive,

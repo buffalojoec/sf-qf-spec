@@ -1,8 +1,10 @@
 use anchor_lang::prelude::*;
 
+use crate::errors::*;
+
 #[account]
-#[derive(default)]
-pub struct Pool<'info> {
+#[derive(Default)]
+pub struct Pool {
     pub name: String,
     pub description: String,
     pub author: Pubkey,
@@ -20,6 +22,7 @@ impl Pool {
     pub fn new(
         name: String,
         description: String,
+        bump: u8,
         author: Pubkey,
         end_time: i32,
         initial_amount: u64,
@@ -27,10 +30,10 @@ impl Pool {
         Pool {
             name,
             description,
+            bump,
             author,
             end_time,
             initial_amount,
-            total_contributors = 0,
             ..Default::default()
         }
     }
@@ -45,13 +48,13 @@ impl Pool {
         let current_time = Clock::get()?.unix_timestamp;
         msg!("now: {}", current_time);
         msg!("End Time: {}", self.end_time);
-        if current_time > self.end_time {
+        if current_time > self.end_time.into() {
             return err!(PoolError::EndDatePassed)
         }
         match self.active {
             PoolState::Active => Ok(()),
             PoolState::Distributed => err!(PoolError::ReleasedFunds),
-            PoolState::Closed => err!(PoolError::ClosedPool),
+            PoolState::Closed => err!(PoolError::PoolClosed),
         }
     }
 }
@@ -64,8 +67,8 @@ pub enum PoolState {
     Closed,
 }
 
-impl Default for FundingState {
+impl Default for PoolState {
     fn default() -> Self {
-        FundingState::Active
+        PoolState::Active
     }
 }

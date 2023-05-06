@@ -27,10 +27,9 @@ pub fn create_pool(
     name: String,
     description: String,
     author: Pubkey,
-    end_time: i32
+    end_time: i32,
     initial_amount: u64,
 ) -> Result<()> {
-    let authority = &mut ctx.accounts.authority;
     let pool = &mut ctx.accounts.pool;
 
     if name.len() > 50 {
@@ -47,7 +46,7 @@ pub fn create_pool(
         *ctx.bumps
             .get("pool")
             .expect("Should've gotten bump"),
-        authority.key(),
+        author,
         end_time,
         initial_amount,
     ));
