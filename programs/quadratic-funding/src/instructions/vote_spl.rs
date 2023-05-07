@@ -1,10 +1,18 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{token, associated_token};
 
-use crate::{state::{
+use crate::error::ProtocolError;
+use crate::state::{
     pool::*,
     project::*,
-}, util::set_and_maybe_realloc};
+};
+use crate::util::{
+    SOL_USD_PRICE_FEED_ID, 
+    USDC_USD_PRICE_FEED_ID, 
+    mint_is_supported, 
+    set_and_maybe_realloc, 
+    to_pubkey
+};
 
 /// Submits a vote with an SPL Token.
 /// Each time a vote is cast, the QF algorithm updates the 
@@ -15,6 +23,9 @@ pub fn vote_spl(
     _project_id: u64,
     amount: u64,
 ) -> Result<()> {
+    // Check to make sure the token is supported
+    mint_is_supported(&ctx.accounts.mint.key())?;
+
     // Check to make sure the pool is not closed
     ctx.accounts.pool.is_active()?;
 
@@ -52,7 +63,10 @@ pub fn vote_spl(
     )?;
 
     // Update the QF algorithm
-    ctx.accounts.pool.update_shares()?;
+    ctx.accounts.pool.update_shares(
+        ctx.accounts.pyth_sol_usd.to_account_info(),
+        ctx.accounts.pyth_usdc_usd.to_account_info(),
+    )?;
 
     Ok(())
 }
@@ -64,6 +78,18 @@ pub fn vote_spl(
     _amount: u64, // Anchor barfs if you don't have all ix args
 )]
 pub struct VoteSpl<'info> {
+    /// CHECK: Pyth will check this
+    #[account(
+        address = to_pubkey(SOL_USD_PRICE_FEED_ID)
+            @ ProtocolError::PythAccountInvalid
+    )]
+    pub pyth_sol_usd: UncheckedAccount<'info>,
+    /// CHECK: Pyth will check this
+    #[account(
+        address = to_pubkey(USDC_USD_PRICE_FEED_ID)
+            @ ProtocolError::PythAccountInvalid
+    )]
+    pub pyth_usdc_usd: UncheckedAccount<'info>,
     #[account( 
         mut,
         seeds = [

@@ -1,11 +1,17 @@
 use anchor_lang::prelude::*;
 use anchor_lang::system_program;
 
+use crate::error::ProtocolError;
 use crate::state::{
     pool::*,
     project::*,
 };
-use crate::util::set_and_maybe_realloc;
+use crate::util::{
+    SOL_USD_PRICE_FEED_ID, 
+    USDC_USD_PRICE_FEED_ID, 
+    set_and_maybe_realloc, 
+    to_pubkey
+};
 
 /// Submits a SOL vote.
 /// Each time a vote is cast, the QF algorithm updates the 
@@ -52,7 +58,10 @@ pub fn vote(
     )?;
 
     // Update the QF algorithm
-    ctx.accounts.pool.update_shares()?;
+    ctx.accounts.pool.update_shares(
+        ctx.accounts.pyth_sol_usd.to_account_info(),
+        ctx.accounts.pyth_usdc_usd.to_account_info(),
+    )?;
 
     Ok(())
 }
@@ -64,6 +73,18 @@ pub fn vote(
     _amount: u64, // Anchor barfs if you don't have all ix args
 )]
 pub struct Vote<'info> {
+    /// CHECK: Pyth will check this
+    #[account(
+        address = to_pubkey(SOL_USD_PRICE_FEED_ID)
+            @ ProtocolError::PythAccountInvalid
+    )]
+    pub pyth_sol_usd: UncheckedAccount<'info>,
+    /// CHECK: Pyth will check this
+    #[account(
+        address = to_pubkey(USDC_USD_PRICE_FEED_ID)
+            @ ProtocolError::PythAccountInvalid
+    )]
+    pub pyth_usdc_usd: UncheckedAccount<'info>,
     #[account( 
         mut,
         seeds = [

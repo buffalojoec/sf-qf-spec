@@ -5,7 +5,7 @@ use crate::state::{
     pool::*,
     source::*,
 };
-use crate::util::set_and_maybe_realloc;
+use crate::util::{mint_is_supported, set_and_maybe_realloc};
 
 /// Funds a pool from a `Source` with an SPL Token.
 /// Pools can be funded at any time, they don't have to be active.
@@ -15,6 +15,9 @@ pub fn fund_pool_spl(
     _pool_id: u64,
     amount: u64,
 ) -> Result<()> {
+    // Check to make sure the token is supported
+    mint_is_supported(&ctx.accounts.mint.key())?;
+
     // Check to make sure the pool is not closed
     ctx.accounts.pool.is_active()?;
 

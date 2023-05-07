@@ -1,7 +1,30 @@
 use anchor_lang::prelude::*;
 use anchor_lang::system_program;
+use std::str::FromStr;
+
+use crate::error::ProtocolError;
 
 pub const MAX_NAME_LEN: usize = 50;
+
+pub const USDC_MINT: &str = "79MBKfDRce7r2cUMiidckfSZ2SAG14fa75GosYxtcwg8";
+
+pub const SOL_USD_PRICE_FEED_ID: &str = "J83w4HKfqxwcq3BEMMkPFSppX3gqekLyLJBexebFVkix";
+pub const USDC_USD_PRICE_FEED_ID: &str = "J83w4HKfqxwcq3BEMMkPFSppX3gqekLyLJBexebFVkix";
+
+pub const SUPPORTED_SPL_MINTS: [&'static str; 1] = [USDC_MINT];
+
+pub fn to_pubkey(string: &str) -> Pubkey {
+    Pubkey::from_str(&string).expect("Error parsing public key from string.")
+}
+
+pub fn mint_is_supported(mint_pubkey: &Pubkey) -> Result<()> {
+    for suppported_mint in SUPPORTED_SPL_MINTS {
+        if to_pubkey(suppported_mint).eq(mint_pubkey) {
+            return Ok(());
+        }
+    }
+    Err(ProtocolError::MintNotSupported.into())
+}
 
 pub fn set_and_maybe_realloc<'info, T>(
     account: &mut Account<'info, T>,

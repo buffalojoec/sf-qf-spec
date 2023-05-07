@@ -18,4 +18,5 @@ default = []
 [dependencies]
 anchor-lang = { version = "0.27.0", features = ["init-if-needed"] }
 anchor-spl = "0.27.0"
+pyth-sdk-solana = "0.7.1"
 winnow = "=0.4.1"
