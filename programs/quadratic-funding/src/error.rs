@@ -1,12 +1,9 @@
 use anchor_lang::prelude::*;
 
 #[error_code]
-pub enum PoolError {
+pub enum ProtocolError {
     #[msg("The provided name string should be a maximum of 50 characters long")]
     NameTooLong,
-
-    #[msg("The provided description string should be a maximum of 250 characters long maximum.")]
-    DescriptionTooLong,
 
     #[msg("This pool has already transferred the funds to the receiver")]
     ReleasedFunds,
@@ -17,6 +14,12 @@ pub enum PoolError {
     #[msg("This pool is still active")]
     PoolStillActive,
 
+    #[msg("A pool can't be created with a start time that's passed")]
+    PoolInvalidStart,
+
+    #[msg("The pool has not begun its funding round yet")]
+    PoolNotStarted,
+
     #[msg("The end date has already passed")]
-    EndDatePassed
+    EndDatePassed,
 }
