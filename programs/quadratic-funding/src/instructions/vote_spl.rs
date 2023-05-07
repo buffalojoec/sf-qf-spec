@@ -31,23 +31,28 @@ pub fn vote_spl(
 
     // Add the project to the shares, if it doesn't exist
     let project_key = ctx.accounts.project.key();
-    if !ctx.accounts.pool.project_shares.contains_key(&project_key) {
-        let mut pool_data = ctx.accounts.pool.clone().into_inner();
-        pool_data.project_shares.insert(
-            project_key, 
-            PoolShare::new_with_vote(VoteTicket::new(
-                ctx.accounts.payer.key(), 
-                Some(ctx.accounts.mint.key()), 
-                amount,
-            ))
-        );
-        set_and_maybe_realloc(
-            &mut ctx.accounts.pool, 
-            pool_data, 
-            ctx.accounts.payer.to_account_info(), 
-            ctx.accounts.system_program.to_account_info()
-        )?;
+    let mut pool_data = ctx.accounts.pool.clone().into_inner();
+    let vote_ticket = VoteTicket::new(
+        ctx.accounts.payer.key(), 
+        Some(ctx.accounts.mint.key()), 
+        amount,
+    );
+    match pool_data.project_shares.get_mut(&project_key) {
+        Some(record) => record.votes.push(vote_ticket),
+        None => {
+            pool_data.project_shares.insert(
+                project_key, 
+                PoolShare::new_with_vote(vote_ticket)
+            );
+            ()
+        }
     }
+    set_and_maybe_realloc(
+        &mut ctx.accounts.pool, 
+        pool_data, 
+        ctx.accounts.payer.to_account_info(), 
+        ctx.accounts.system_program.to_account_info()
+    )?;
 
     // Transfer the vote to the project
     token::transfer(
