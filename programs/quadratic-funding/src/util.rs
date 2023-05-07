@@ -6,10 +6,10 @@ use crate::error::ProtocolError;
 
 pub const MAX_NAME_LEN: usize = 50;
 
-pub const USDC_MINT: &str = "79MBKfDRce7r2cUMiidckfSZ2SAG14fa75GosYxtcwg8";
+pub const USDC_MINT: &str = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 
-pub const SOL_USD_PRICE_FEED_ID: &str = "J83w4HKfqxwcq3BEMMkPFSppX3gqekLyLJBexebFVkix";
-pub const USDC_USD_PRICE_FEED_ID: &str = "J83w4HKfqxwcq3BEMMkPFSppX3gqekLyLJBexebFVkix";
+pub const SOL_USD_PRICE_FEED_ID: &str = "ALP8SdU9oARYVLgLR7LrqMNCYBnhtnQz1cj6bwgwQmgj";
+pub const USDC_USD_PRICE_FEED_ID: &str = "8GWTTbNiXdmyZREXbjsZBmCRuzdPrW55dnZGDkTRjWvb";
 
 pub const SUPPORTED_SPL_MINTS: [&'static str; 1] = [USDC_MINT];
 
