@@ -9,7 +9,30 @@ url = "https://api.apr.dev"
 
 [provider]
 cluster = "Localnet"
-wallet = "/Users/joesol/.config/solana/id.json"
+wallet = "~/.config/solana/id.json"
+
+[test.validator]
+url = "https://api.mainnet-beta.solana.com"
+
+# Mint: USDC
+[[test.validator.clone]]
+address = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+
+# Token Metadata: Program
+[[test.validator.clone]]
+address = "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
+
+# Pyth: Program
+[[test.validator.clone]]
+address = "FsJ3A3u2vn5cTVofAjvy6y5kwABJAqYWpe4975bi2epH"
+
+# Pyth: SOL_USD
+[[test.validator.clone]]
+address = "ALP8SdU9oARYVLgLR7LrqMNCYBnhtnQz1cj6bwgwQmgj"
+
+# Pyth: USDC_USD
+[[test.validator.clone]]
+address = "8GWTTbNiXdmyZREXbjsZBmCRuzdPrW55dnZGDkTRjWvb"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
